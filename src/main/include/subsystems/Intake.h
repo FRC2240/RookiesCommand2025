@@ -13,15 +13,13 @@
 class Intake : public frc2::SubsystemBase
 {
 public:
-    enum BALL_COLOR
-    {
+    enum BALL_COLOR {
         kRED,
         kBLUE,
         kNONE
     };
 
-    enum STATE
-    {
+    enum STATE {
         kIDLE,
         kACTIVE,
         kINTAKE,
@@ -76,7 +74,7 @@ private:
     BALL_COLOR m_currentColor = kNONE;
 
     //rev::ColorSensorV3 m_colorSensor{frc::I2C::Port::kOnboard};
-    rev::CANSparkMax m_roller{2, rev::CANSparkMax::MotorType::kBrushless};
+    //rev::CANSparkMax m_roller{2, rev::CANSparkMax::MotorType::kBrushless};
     rev::CANSparkMax m_hinge{3, rev::CANSparkMax::MotorType::kBrushless};
     rev::SparkRelativeEncoder m_encoder = m_hinge.GetEncoder();
     rev::SparkPIDController m_pid = m_hinge.GetPIDController();

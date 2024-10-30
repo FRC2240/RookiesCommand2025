@@ -11,12 +11,18 @@
 RobotContainer::RobotContainer()
 {
   ConfigureBindings();
+  m_intake = new Intake();
+  m_vision = new Vision();
+  m_shooter = new Shooter(m_vision);
 }
 
 void RobotContainer::ConfigureBindings()
 {
-  m_intake.SetDefaultCommand(m_intake.IdleCommand());
-  m_stick.A().ToggleOnTrue(m_intake.ActiveCommand().Unless([this] -> bool { return this->m_intake.IsProcessing(); }));
+  //m_intake->SetDefaultCommand(m_intake->IdleCommand());
+  m_shooter->SetDefaultCommand(m_shooter->IdleCommand());
+
+  //m_stick.A().ToggleOnTrue(m_intake->ActiveCommand().Unless([this] -> bool { return this->m_intake->IsProcessing(); }));
+  m_stick.RightTrigger().WhileTrue(m_shooter->ShootCommand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand()

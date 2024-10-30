@@ -79,7 +79,7 @@ frc2::CommandPtr Intake::IdleCommand()
     return frc2::RunCommand([this] -> void
                             {
                                 m_state = kIDLE;
-                                m_roller.Set(0.0);
+                                //m_roller.Set(0.0);
                                 m_pid.SetReference(0.0, rev::CANSparkMax::ControlType::kPosition);
                             },
                             {this})
@@ -92,7 +92,7 @@ frc2::CommandPtr Intake::ActiveCommand()
     return frc2::RunCommand([this] -> void
                             {
                                 m_state = kACTIVE;
-                                m_roller.Set(0.05);
+                                //m_roller.Set(0.05);
                                 m_pid.SetReference(80.5, rev::CANSparkMax::ControlType::kPosition);
                             },
                             {this})
@@ -107,7 +107,7 @@ frc2::CommandPtr Intake::EjectCommand()
     return frc2::RunCommand([this] -> void
                             {
                                 m_state = kEJECT;
-                                m_roller.Set(-0.05);
+                                //m_roller.Set(-0.05);
                                 m_pid.SetReference(80.5, rev::CANSparkMax::ControlType::kPosition);
                             },
                             {this})
@@ -121,7 +121,7 @@ frc2::CommandPtr Intake::IntakeCommand()
     return frc2::RunCommand([this] -> void
                             {
                                 m_state = kINTAKE;
-                                m_roller.Set(0.05);
+                                //m_roller.Set(0.05);
                                 m_pid.SetReference(80.5, rev::CANSparkMax::ControlType::kPosition);
                             },
                             {this})
