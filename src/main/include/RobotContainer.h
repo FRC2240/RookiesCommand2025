@@ -8,7 +8,8 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "subsystems/Intake.h"
-
+#include "subsystems/Shooter.h"
+#include "subsystems/Vision.h"
 
 class RobotContainer
 {
@@ -22,6 +23,7 @@ private:
   
   frc2::CommandXboxController m_stick{0};
 
-  Intake m_intake;
-
+  //Intake  m_intake;
+  Shooter m_shooter;
+  Vision  m_vision;
 };

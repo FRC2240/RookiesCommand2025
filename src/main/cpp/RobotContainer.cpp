@@ -15,8 +15,15 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::ConfigureBindings()
 {
-  m_intake.SetDefaultCommand(m_intake.IdleCommand());
-  m_stick.A().ToggleOnTrue(m_intake.ActiveCommand().Unless([this] -> bool { return this->m_intake.IsProcessing(); }));
+  m_shooter.SetDefaultCommand(m_shooter.IdleCommand());
+  //m_intake.SetDefaultCommand(m_intake.IdleCommand());
+  //m_stick.A().ToggleOnTrue(m_intake.ActiveCommand().Unless([this] -> bool { return this->m_intake.IsProcessing(); }));
+
+  frc2::Trigger{[this] -> bool
+                {
+                  return m_vision.InRange(8.0_ft, 9.0_ft);
+                }}
+      .WhileTrue(m_shooter.ShootCommand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand()
