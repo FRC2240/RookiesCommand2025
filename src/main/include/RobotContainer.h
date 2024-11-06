@@ -23,7 +23,7 @@ private:
   
   frc2::CommandXboxController m_stick{0};
 
-  //Intake  m_intake;
+  Intake  m_intake;
   Shooter m_shooter;
   Vision  m_vision;
 };

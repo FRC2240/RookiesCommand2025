@@ -1,6 +1,5 @@
 #pragma once
 
-#include <rev/CANSparkMax.h>
 #include <units/length.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/SubsystemBase.h>
@@ -8,18 +7,13 @@
 #include <frc2/command/Commands.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/ConditionalCommand.h>
+#include "ctre/phoenix6/TalonFX.hpp"
 
 class Shooter : public frc2::SubsystemBase
 {
 public:
-    Shooter()
-    {
-        frc::SmartDashboard::PutNumber("P Gain", m_pidCoeff.kP);
-        m_pid.SetP(m_pidCoeff.kP);
+    Shooter();
 
-        m_pidCoeff.kFF = frc::SmartDashboard::PutNumber("Feed Forward", m_pidCoeff.kFF);
-        m_pid.SetFF(m_pidCoeff.kFF);
-    }
     void Periodic() override;
 
     // COMMANDS
@@ -27,22 +21,13 @@ public:
     frc2::CommandPtr ShootCommand();
 
 private:
-    rev::CANSparkMax m_left{2, rev::CANSparkMax::MotorType::kBrushless};
-    rev::SparkRelativeEncoder m_encoder = m_left.GetEncoder();
-    rev::SparkPIDController m_pid = m_left.GetPIDController();
+    static constexpr char const *CANBUS_NAME = "rio";
+    ctre::phoenix6::hardware::TalonFX m_fx{21, CANBUS_NAME};
 
-    struct pidCoeff
-    {
-        double kP;
-        double kI;
-        double kD;
-        double kIz;
-        double kFF;
-        double kMinOutput;
-        double kMaxOutput;
-    };
+    /* Start at velocity 0, use slot 0 */
+    ctre::phoenix6::controls::VelocityTorqueCurrentFOC m_velocityTorque = ctre::phoenix6::controls::VelocityTorqueCurrentFOC{0_tps}.WithSlot(0);
+    /* Keep a neutral out so we can disable the motor */
+    ctre::phoenix6::controls::NeutralOut m_brake{};
 
-    void setP(double pGain) { m_pidCoeff.kP = pGain; }
-
-    pidCoeff m_pidCoeff{0.0, 0.0, 0.0, 0.0, 0.00017, -1.0, 1.0};
+    units::angular_velocity::turns_per_second_t m_desiredRotationsPerSecond = 20.0_tps;
 };

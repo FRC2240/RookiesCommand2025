@@ -11,6 +11,7 @@
 #include "units/time.h"
 #include "frc/DriverStation.h"
 #include <map>
+#include <iostream>
 
 class Intake : public frc2::SubsystemBase
 {
@@ -44,13 +45,15 @@ public:
     frc2::CommandPtr EjectCommand();
 
     bool IsProcessing() {
+        std::cout << "Is Processing: " <<  ((m_state == kINTAKE) || (m_state == kEJECT)) <<std::endl;
         return (m_state == kINTAKE) || (m_state == kEJECT);
     };
 
-private:
-    BALL_COLOR getBallColor();
     bool BallDetected();
     bool IsColorCorrect();
+
+private:
+    BALL_COLOR getBallColor();
 
     const double TOLERANCE = 0.04;
 

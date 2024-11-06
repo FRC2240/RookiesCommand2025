@@ -3,9 +3,9 @@
 
 Intake::Intake()
 {
-    frc::SmartDashboard::PutNumber("red", 0);
-    frc::SmartDashboard::PutNumber("green", 0);
-    frc::SmartDashboard::PutNumber("blue", 0);
+    frc::SmartDashboard::PutNumber("Color:red", 0);
+    frc::SmartDashboard::PutNumber("Color:green", 0);
+    frc::SmartDashboard::PutNumber("Color:blue", 0);
 
     m_pid.SetP(m_pidCoeff.kP);
 }
@@ -26,12 +26,14 @@ void Intake::Periodic()
 
     m_currentColor = getBallColor();
 
-    frc::SmartDashboard::PutString("state", m_stateNames[m_state]);
+    frc::SmartDashboard::PutString("Intake State", m_stateNames[m_state]);
+    frc::SmartDashboard::PutBoolean("Color Correct", IsColorCorrect());
+    frc::SmartDashboard::PutNumber("Color Current", m_currentColor);
 }
 
 bool Intake::IsColorCorrect()
 {
-    return (m_correctColor == m_currentColor);
+    return BallDetected() && (m_correctColor == m_currentColor);
 }
 
 Intake::BALL_COLOR Intake::getBallColor()
@@ -39,9 +41,9 @@ Intake::BALL_COLOR Intake::getBallColor()
     //auto color = m_colorSensor.GetColor();
     
     frc::Color color = {
-        frc::SmartDashboard::GetNumber("red", 0),
-        frc::SmartDashboard::GetNumber("green", 0),
-        frc::SmartDashboard::GetNumber("blue", 0)
+        frc::SmartDashboard::GetNumber("Color:red", 0),
+        frc::SmartDashboard::GetNumber("Color:green", 0),
+        frc::SmartDashboard::GetNumber("Color:blue", 0)
     };
 
     //double sensorColors[3] = {color.red, color.green, color.blue};
@@ -76,35 +78,33 @@ bool Intake::BallDetected()
 // Default command, stow the intake
 frc2::CommandPtr Intake::IdleCommand()
 {
-    return frc2::RunCommand([this] -> void
+    return frc2::cmd::Run([this]
                             {
                                 m_state = kIDLE;
                                 m_roller.Set(0.0);
                                 m_pid.SetReference(0.0, rev::CANSparkMax::ControlType::kPosition);
                             },
-                            {this})
-        .ToPtr();
+                            {this});
 }
 
 // Deploy the intake to collect a game piece
 frc2::CommandPtr Intake::ActiveCommand()
 {
-    return frc2::RunCommand([this] -> void
+    return frc2::cmd::Run([this]
                             {
                                 m_state = kACTIVE;
                                 m_roller.Set(0.05);
                                 m_pid.SetReference(80.5, rev::CANSparkMax::ControlType::kPosition);
                             },
                             {this})
-        .Until([this] -> bool
-               { return BallDetected(); })
+        .Until([this] { return BallDetected(); })
         .AndThen(ProcessBallCommand());
 }
 
 // Eject the game piece
 frc2::CommandPtr Intake::EjectCommand()
 {
-    return frc2::RunCommand([this] -> void
+    return frc2::cmd::Run([this]
                             {
                                 m_state = kEJECT;
                                 m_roller.Set(-0.05);
@@ -118,7 +118,7 @@ frc2::CommandPtr Intake::EjectCommand()
 // Intake the game piece
 frc2::CommandPtr Intake::IntakeCommand()
 {
-    return frc2::RunCommand([this] -> void
+    return frc2::cmd::Run([this]
                             {
                                 m_state = kINTAKE;
                                 m_roller.Set(0.05);
@@ -134,6 +134,6 @@ frc2::CommandPtr Intake::ProcessBallCommand()
     return frc2::cmd::Either(
         IntakeCommand(),
         EjectCommand(),
-        [this] -> bool
+        [this]
         { return IsColorCorrect(); });
 }
